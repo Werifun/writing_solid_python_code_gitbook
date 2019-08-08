@@ -268,9 +268,9 @@ Python 的内建命名空间是支持一小部分常量的，例如 True、False
       
       def __setattr__(self, name, value):
           if self.__dict__.has_key(name):
-              raise self.ConstError, "Can't change const.{}".format(name)
+              raise self.ConstError("Can't change const.{}".format(name))
           if not name.isupper():
-              raise self.ConstCaseError, "const name {} is not all uppercase".format(name)
+              raise self.ConstCaseError("const name {} is not all uppercase".format(name))
           self.__dict__[name] = value
 
   import sys
@@ -292,16 +292,95 @@ Python 的内建命名空间是支持一小部分常量的，例如 True、False
       
   import sys
   sys.modules[__name__] = _const()
+  
+  # 我这边要分开拆成 const.py和constant.py，不然会报错no module named 'const' 
   import const
   const.MY_CONSTANT = 1
-  const.MY_SECOND_CONSTANT = 2
+const.MY_SECOND_CONSTANT = 2
   ```
 
   当在其他模块中引用这些常量时，按照如下方式进行即可：
-
+  
   ```python
   from constant import const
-  print(const.MY_SECOND_CONSTANT)
+print(const.MY_SECOND_CONSTANT)
   ```
+  
+* 一些代码的自我理解  
+  ```python
+  #coding:utf-8
 
-  ​
+  class _const:
+      class ConstError(TypeError):pass  # TyperError 指对类型无效的操作
+      class ConstCaseError(ConstError):pass
+  
+      def __setattr__(self, key, value):  # 在对类的属性赋值的时候会自动调用
+          if key in self.__dict__:  # object.__dict__以dict的方式存储object所有可读属性
+              raise self.ConstError("Can't change const.%s" %key)
+          if not key.isupper():
+              raise self.ConstCaseError("const name %s is not all uppercase" %key)
+  
+          self.__dict__[key] = value
+  
+      def __getitem__(self,key):  # 了解一下__getitem__的功能，并且使用getitem可以像字典一样获取常量
+          if key in self.__dict__:
+              return self.__dict__[key]
+          else:
+              raise self.ConstError("Can't return const.%s, No Existsing Key!"%key)
+  
+      def __delattr__(self, name):
+          if name in self.__dict__:
+              raise self.ConstError("Can't unbind const instance attribute {}".format(name))
+  
+          raise AttributeError("const instance has no attribute {}".format(name))
+  
+  
+  import sys
+  sys.modules[__name__] = _const()
+  # sys.modules保存有当前Python环境中已经导入的模块记录，这是一个全局字典，当Python启动后就加载在内存中。
+  # dict的key为文件名，value为模块对象。
+  # __name__就是标识模块的名字的一个系统变量。
+  # 如果模块被导入，__name__就是模块的名字
+  # 如果模块被直接执行，__name__的值是'__name__'
+  
+  # sys.modules['const'] = _const()
+  # 即，让_const类作为模块的入口点，引入const.py等价于声明了一个_const类的实例。
+  
+  ```
+  * __\_\_setattr\_\___:
+  通过_const的\_\_setattr\_\_对象方法判断该对象是否存在属性name，若存在则抛出自定义异常ConstError，否则创建该属性。
+  
+  * __\_\_getitem\_\___:
+  
+    \_\_getitem\_\_可以像字典一样获取常量
+  
+    const.Pi = 3.14
+  
+    const['Pi'] = 3.14    
+  
+  * __\_\_delattr\_\___:
+  
+    删除attri时会调用该函数。
+  
+  * sys.modules[\_\_name\_\_] = _const()
+  
+    将\_const实例化的对象赋值sys.modules[\_\_name\_\_]，const模块被绑定成\_const对象。
+  
+    \_\_name\_\_在首次载入const过程中为'const'，而[sys.modules](http://docs.python.org/2.7/library/sys.html#sys.modules)是模块名与已加载模块的dict。
+  
+    理解不一定正确，仅供参考：
+  
+    首先，sys.modules默认存储模块信息，可以理解为存储存储了\_\_name\_\_的模块对象
+    其次，sys.modules[\_\_name\_\_] = \_const()相当于用_const覆盖了\_\_name\_\_对应的对象。
+  
+    如此，import const后const模块的内容就是\_const对象。这样不仅保证了\_const对象是singleton，而且还保证了名字空间的简洁。
+  
+  * 
+  
+  * 
+  
+  * [参考](<https://www.malike.net.cn/blog/2013/11/03/python-constants/>)
+  
+    
+  
+    

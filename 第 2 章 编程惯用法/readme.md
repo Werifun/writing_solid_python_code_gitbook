@@ -88,6 +88,8 @@ dis.dis(swap2)
 
 ### 建议 10：充分利用 Lazy evaluation 的特性
 
+（在Python cookbook中，class的一章中也讲到过lazy属性，下次遇到一起看一看）
+
 Lazy evaluation 常被译为“延迟计算”或“惰性计算”，指的是仅仅在真正需要执行的时候才计算表达式的值。充分利用 Lazy evaluation 的特性带来的好处主要体现在以下两个方面：
 
 * 避免不必要的计算，带来性能上的提升。对于 Python 中的条件表达式 `if x and y`，在 x 为 false 的情况下 y 表达式的值将不再计算。而对于 `if x or y`，当 x 的值为 true 的时候将直接返回，不再计算 y 的值。因此编程中应该充分利用该特性。例如：
@@ -166,6 +168,8 @@ Seasons = Enum("Seasons", "Spring Sumter Autumn Winter")
 
 `flufl.enum` 提供了 `__members__` 属性，可以对枚举名称进行迭代。
 
+`__members__` is an `OrderedDict` of `member_name`:`member` items. It is only available on the class.
+
 ```python
 for member in Seasons.__members__:
     print member
@@ -206,7 +210,7 @@ True
 True
 ```
 
-###建议 13：尽量转换为浮点类型后再做除法
+### 建议 13：尽量转换为浮点类型后再做除法
 
 * 【PS：这应该是 Python2 中存在的问题】
 
@@ -220,7 +224,7 @@ Python 中除了除法运算之外，整数和浮点数的其他操作行为还�
 
 ```python
 i = 1
-while i != 1.5:
+while i != 1.5:  # abs(i-1.5) < 0.1
     i = i + 0.1
     print i
 ```
