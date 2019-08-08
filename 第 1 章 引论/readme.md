@@ -292,16 +292,18 @@ Python 的内建命名空间是支持一小部分常量的，例如 True、False
       
   import sys
   sys.modules[__name__] = _const()
+  
+  # 我这边要分开拆成 const.py和constant.py，不然会报错no module named 'const' 
   import const
   const.MY_CONSTANT = 1
-  const.MY_SECOND_CONSTANT = 2
+const.MY_SECOND_CONSTANT = 2
   ```
 
   当在其他模块中引用这些常量时，按照如下方式进行即可：
-
+  
   ```python
   from constant import const
-  print(const.MY_SECOND_CONSTANT)
+print(const.MY_SECOND_CONSTANT)
   ```
-
-  ​
+  
+  
