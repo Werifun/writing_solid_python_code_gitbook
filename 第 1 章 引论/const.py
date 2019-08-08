@@ -4,6 +4,13 @@ class _const:
     class ConstError(TypeError):pass  # TyperError 指对类型无效的操作
     class ConstCaseError(ConstError):pass
 
+    def __init__(self):
+        
+        _const.__setattr__ = _const._setattr_imp1
+
+    def _setattr_imp1(self, name, value):
+        raise self.ConstError("Can't bind const instance attribute {}".format(name))
+
     def __setattr__(self, key, value):  # 在对类的属性赋值的时候会自动调用
         if key in self.__dict__:  # object.__dict__以dict的方式存储object所有可读属性
             raise self.ConstError("Can't change const.%s" %key)
@@ -18,7 +25,11 @@ class _const:
         else:
             raise self.ConstError("Can't return const.%s, No Existsing Key!"%key)
 
+    def __delattr__(self, name):
+        if name in self.__dict__:
+            raise self.ConstError("Can't unbind const instance attribute {}".format(name))
 
+        raise AttributeError("const instance has no attribute {}".format(name))
 
 
 import sys
