@@ -4,12 +4,21 @@ class _const:
     class ConstError(TypeError):pass  # TyperError 指对类型无效的操作
     class ConstCaseError(ConstError):pass
 
+<<<<<<< HEAD
 #    def __init__(self):
 #        
 #        _const.__setattr__ = _const._setattr_imp1
 #
 #    def _setattr_imp1(self, name, value):
 #        raise self.ConstError("Can't bind const instance attribute {}".format(name))
+=======
+    def __init__(self):
+        
+        _const.__setattr__ = _const._setattr_imp1
+
+    def _setattr_imp1(self, name, value):
+        raise self.ConstError("Can't bind const instance attribute {}".format(name))
+>>>>>>> 4da5f351e4051cd7449ff2ffe96daa331aa5c89a
 
     def __setattr__(self, key, value):  # 在对类的属性赋值的时候会自动调用
         if key in self.__dict__:  # object.__dict__以dict的方式存储object所有可读属性
