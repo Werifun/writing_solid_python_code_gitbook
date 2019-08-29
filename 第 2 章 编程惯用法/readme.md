@@ -350,6 +350,14 @@ Python 中存在 `string interning` （字符串驻留）机制，对于较小�
 
 ### 建议 17：考虑兼容性，尽可能使用 Unicode
 
+----------
+#### 注意点
+* unicode和utf-8的区别和联系
+* Python3中，str和Unicode都是继承自基类basestring
+* 注意各种编码的，decode和encode的用法，GBK,utf-8等编码的使用
+* 了解一下BOM(不可见的字符)
+---------
+
 Python 内建的字符串有两种类型：`str` 和 `Unicode`，它们拥有共同的祖先 `basestring`。其中，`Unicode` 是 Python2.0 中引入的一种新的数据类型，所有的 `Unicode` 字符串都是 `Unicode` 类型的实例。
 
 ```python
