@@ -5,6 +5,8 @@ import configparser
 import os
 
 '''
+文件中由多个section构成，每个section下又有多个标准的配置项(options)
+
 -read(filename)               直接读取文件内容
 -sections()                      得到所有的section，并以列表的形式返回
 -options(section)            得到该section的所有option
@@ -21,8 +23,16 @@ cf.read("test.ini")
 #return all section
 secs = cf.sections()
 print('sections:', secs, type(secs))
+'''
+# 输出：sections的总个数，及就是[]中的内容
+# sections: ['db', 'concurrent'] <class 'list'>
+'''
 opts = cf.options("db")
 print('options:', opts, type(opts))
+'''
+输出：[db]中含有的选项
+options: ['db_port', 'db_user', 'db_host', 'db_pass'] <class 'list'>
+'''
 kvs = cf.items("db")
 print('db:', kvs)
 
